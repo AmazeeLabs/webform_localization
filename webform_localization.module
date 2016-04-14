@@ -240,6 +240,24 @@ function webform_localization_node_load($nodes, $types) {
 }
 
 /**
+ * Implements hook_entitycache_ENTITY_TYPE_load().
+ */
+function webform_localization_entitycache_node_load($nodes) {
+  $webform_types = webform_variable_get('webform_node_types');
+  $nodes_to_process = array();
+  $types = array();
+  foreach ($nodes as $node) {
+    if (in_array($node->type, $webform_types)) {
+      $types[$node->type] = $node->type;
+      $nodes_to_process[$node->nid] = $node;
+    }
+  }
+  if (!empty($nodes_to_process)) {
+    webform_localization_node_load($nodes_to_process, array_values($types));
+  }
+}
+
+/**
  * Implements hook_webform_submission_update().
  */
 function webform_localization_webform_submission_insert($node, $submission) {
