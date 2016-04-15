@@ -286,12 +286,18 @@ function webform_localization_update_translation_strings($properties) {
  *   A node object.
  */
 function webform_localization_translate_strings(&$node, $update = FALSE) {
+
+  // The untranslated strings can be stored on the special node property.
+  $strings_source = isset($node->webform_localization_i18n_strings_source)
+    ? $node->webform_localization_i18n_strings_source
+    : $node->webform;
+
   $name = implode(':', array('webform',
         $node->webform['nid'],
         'confirmation'));
   $node->webform['confirmation'] = webform_tt(
           $name,
-          $node->webform['confirmation'],
+          $strings_source['confirmation'],
           NULL,
           $update);
   $name = implode(
@@ -302,7 +308,7 @@ function webform_localization_translate_strings(&$node, $update = FALSE) {
             'submit_text'));
   $node->webform['submit_text'] = webform_tt(
           $name,
-          $node->webform['submit_text'],
+          $strings_source['submit_text'],
           NULL,
           $update);
 
@@ -310,7 +316,7 @@ function webform_localization_translate_strings(&$node, $update = FALSE) {
   // default confirmation page.
   if (!in_array($node->webform['redirect_url'], array('<confirmation>', '<none>'))) {
     $name = implode(':', array('webform', $node->webform['nid'], 'redirect_url'));
-    $node->webform['redirect_url'] = webform_tt($name, $node->webform['redirect_url'], NULL, $update);
+    $node->webform['redirect_url'] = webform_tt($name, $strings_source['redirect_url'], NULL, $update);
   }
 }
 
@@ -397,8 +403,14 @@ function webform_localization_emails_translation_string_refresh($emails, $nid) {
  *   A node object.
  */
 function webform_localization_email_translate_strings(&$node) {
+
+  // The untranslated strings can be stored on the special node property.
+  $strings_source = isset($node->webform_localization_i18n_strings_source)
+    ? $node->webform_localization_i18n_strings_source
+    : $node->webform;
+
   $nid = $node->webform['nid'];
-  foreach ($node->webform['emails'] as $eid => &$email) {
+  foreach ($strings_source['emails'] as $eid => &$email) {
     if (!empty($email['subject']) && $email['subject'] != 'default') {
       $name = implode(':', array('webform',
             $nid,
